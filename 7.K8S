@@ -1,0 +1,1086 @@
+DAY-01:
+
+POD: Group of containers
+it is the smallest unit of K8s that can be deployable.
+inside pod we have container 
+inside container we have application.
+
+POD CAN BE CREATED ON 2 WAYS.
+
+1. IMPERTAIVE: commands.
+2. DECLARATIVE: Manifest file.
+
+
+
+
+ 1  ll
+    2  mkdir abcd
+    3  cd abcd/
+    4  ll
+    5  vim minikube.sh
+    6  sh minikube.sh
+    7  kubectl run pod1 --image=rahamshaik/awsreponit:latest
+    8  kubectl get pods
+    9  kubectl get pod
+   10  kubectl get po
+   11  kubectl get po -o wide
+   12  kubectl descibe pod pod1
+   13  kubectl describe pod pod1
+   14  kubectl delete pod pod1
+   15  vim pod1.yml
+   16  kubectl create -f pod1.yml
+   17  kubectl get po
+   18  kubectl describe pod pod1
+   19  cat pod1.yml
+   20  kubectl api-resources
+   21  cat pod1.yml
+   22  history
+
+
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install curl wget apt-transport-https -y
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+sudo chmod +x /usr/local/bin/minikube
+sudo minikube version
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+sudo echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+sudo minikube start --driver=docker --force
+
+
+============================================================================
+
+
+DAY-02:
+
+REPLICASET: it will create multiple copies or replicas of a pod.
+if we delete one pod RS will create another pod.
+
+replicaset --- > pods
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: nginx
+======================================================================================================================================================
+
+
+DEPLOYMENT: It is used to update the application.
+it will track the changes of an application.
+
+deployment --- > replicaset --- > pods
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: nginx:1.16
+        
+        
+ HISTORY:
+ 
+ 
+   1  mkdir abcd
+    2  cd abcd/
+    3  vim minikube.sh
+    4  sh minikube.sh
+    5  rm -rf *
+    6  vim abc.yml
+    7  kubectl create -f abc.yml
+    8  kubectl get po
+    9  kubectl delete po swiggy-rs-zqgqf
+   10  kubectl get po
+   11  kubectl delete pod swiggy-rs-z7667
+   12  kubectl get po
+   13  kubectl run zomato --image=nginx
+   14  kubectl run zomato1 --image=nginx
+   15  kubectl run zomato2 --image=nginx
+   16  kubectl get po
+   17  kubectl get po --show-labels
+   18  kubectl get replicaset
+   19  kubectl get rs
+   20  kubectl api-resources
+   21  kubectl get rs
+   22  kubectl desribe rs swiggy-rs
+   23  kubectl describe rs swiggy-rs
+   24  kubectl get rs
+   25  kubectl scale rs swiggy-rs --replicas=10
+   26  kubectl get rs
+   27  kubectl get po
+   28  kubectl scale rs swiggy-rs --replicas=5
+   29  kubectl get po
+   30  kubectl delete rs swiggy-rs
+   31  kubectl get po
+   32  kubectl delete pods -n default
+   33  kubectl delete all -n default
+   34  kubectl delete all -n=default
+   35  kubectl get po
+   36  kubectl delete pod zomato zomato1 zomato2
+   37  kubectl get po
+   38  vim abc.yml
+   39  kubectl create -f abc.yml
+   40  kubectl get deployment
+   41  kubectl get rs
+   42  kubectl get po
+   43  kubectl delete pod swiggy-deploy-64cd94d7f4-p9ztf
+   44  kubectl get po
+   45  kubectl describe deploy
+   46  vim abc.yml
+   47  kubectl create -f abc.yml
+   48  kubectl apply -f abc.yml
+   49  kubectl describe deploy
+   50  vim abc.yml
+   51  kubectl apply -f abc.yml
+   52  kubectl describe deploy
+   53  kubectl get po
+   54  kubectl rollout status deployment/swiggy-deploy
+   55  kubectl describe deploy
+   56  kubectl get deploy
+   57  kubectl get po
+   58  kubectl edit deploy swiggy-deploy
+   59  kubectl get deploy
+   60  kubectl get po
+   61  kubectl describe deploy
+   62  kubectl edit deploy swiggy-deploy
+   63  kubectl get po
+   64  kubectl edit deploy swiggy-deploy
+   65  kubectl get po
+   66  kubectl edit deploy swiggy-deploy
+   67  cat abc.yml
+   68  history
+
+======================================================
+
+DAY-03: 
+
+kOps, also known as Kubernetes operations, is an open-source tool that helps you create, destroy, upgrade, and maintain a highly available, production-grade Kubernetes cluster. Depending on the requirement, kOps can also provision cloud infrastructure.
+kOps is mostly used in deploying AWS and GCE Kubernetes clusters. But officially, the tool only supports AWS. Support for other cloud providers (such as DigitalOcean, GCP, and OpenStack) are in the beta stage.
+
+ADVANTAGES:
+•	Automates the provisioning of AWS and GCE Kubernetes clusters
+•	Deploys highly available Kubernetes masters
+•	Supports rolling cluster updates
+•	Autocompletion of commands in the command line
+•	Generates Terraform and CloudFormation configurations
+•	Manages cluster add-ons.
+•	Supports state-sync model for dry-runs and automatic idempotency
+•	Creates instance groups to support heterogeneous clusters
+ALTERNATIVES:
+Amazon EKS , MINIKUBE, KUBEADM, RANCHER, TERRAFORM, HELM.
+
+IAM KEYS: Used to provide access for the kops to create infra.
+
+IAM -- > USERS -- > ADD USERS -- > NAME: kops  -- > NEXT -- > Set permissions: Set permission -- > AdministratorAccess -- > next -- > create
+users -- > security credentials -- > create Access keys -- > CLI -- > NEXT -- > CREATE ACCESS KEYS
+
+STEP-1:
+ATTACHING KOPS PERMISSIONS TO EC2:
+aws configure
+cd .aws 
+ll
+vim config
+vim credentials
+
+STEP-2: DOWNLOAD KOPS & KUBECTL 
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+wget https://github.com/kubernetes/kops/releases/download/v1.24.1/kops-linux-amd64
+chmod +x kops-linux-amd64 kubectl  # to provide executable permission of both files
+mv kubectl /usr/local/bin/kubectl  # all the user executed commands will be on bin folder
+mv kops-linux-amd64  /usr/local/bin/kops
+vim .bashrc
+export PATH=$PATH:/usr/local/bin/
+source .bashrc
+
+STEP-3: CREATING BUCKET (To store cluster information) bucket is an object-level store.
+aws s3api create-bucket --bucket nareshit0077.k8s.local --region us-east-1
+aws s3api put-bucket-versioning --bucket nareshit0077.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+export KOPS_STATE_STORE=s3://nareshit0077.k8s.local
+
+STEP-4: CREATING CLUSTER
+kops create cluster --name nareshit0077.k8s.local --zones us-east-1a  --master-size t2.medium --node-size t2.micro
+kops update cluster --name nareshit0077.k8s.local --yes --admin
+
+kops delete cluster --name nareshit0077.k8s.local --yes
+
+HISTORY:
+
+ 1  aws configure
+    2  cd .aws/
+    3  ll
+    4  vim config
+    5  vim credentials
+    6  cd
+    7  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    8  ld
+    9  ls
+   10  wget https://github.com/kubernetes/kops/releases/download/v1.24.1/kops-linux-amd64
+   11  ls
+   12  ll
+   13  chmod +x kops-linux-amd64 kubectl
+   14  ll
+   15  mv kubectl /usr/local/bin/kubectl
+   16  ll
+   17  mv kops-linux-amd64 /usr/local/bin/kops
+   18  kops version
+   19  kubectl
+   20  vim .bashrc
+   21  source .bashrc
+   22  kops version
+   23  kubectl version
+   24  aws s3api create-bucket --bucket rahamssshaik09.k8s.local --region ap-south-1
+   25  aws s3api create-bucket --bucket nareshit0077.k8s.local --region ap-south-1
+   26  aws s3api create-bucket --bucket nareshit0077.k8s.local --region us-east-1
+   27  vim .aws/config
+   28  aws s3api put-bucket-versioning --bucket rahamssshaik09.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+   29  aws s3api put-bucket-versioning --bucket nareshit0077.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+   30  export KOPS_STATE_STORE=s3://nareshit0077.k8s.local
+   31  kops create cluster --name nareshit0077.k8s.local --zones us-east-1a  --master-size t2.medium --node-size t2.micro
+   32  kops get cluster
+   33  kops edit cluster nareshit0077.k8s.local
+   34  kops edit ig --name=nareshit0077.k8s.local master-us-east-1a
+   35   kops edit ig --name=nareshit0077.k8s.local nodes-us-east-1a
+   36  kops update cluster --name nareshit0077.k8s.local --yes --admin
+   37   kops validate cluster --wait 10m
+   38  kubectl get nodes
+   39  vim abc.yml
+   40  kubectl get no
+   41  ll
+   42  kubectl create -f abc.yml
+   43  kubectl get rs
+   44  kubectl get po
+   45  kubectl get po -o wide
+   46  kubectl scale rs swiggy-rs --replicas=10
+   47  kubectl get po -o wide
+   48  kubectl get no
+   49  kops get cluster
+   50  kubectl get cluster
+   51  kops delete cluster --name nareshit0077.k8s.local --yes
+   52  history
+   
+   =================================================================================================================
+   
+   DAY-04:
+   
+vim .bashrc
+export PATH=$PATH:/usr/local/bin/
+source .bashrc
+
+aws configure
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+wget https://github.com/kubernetes/kops/releases/download/v1.25.0/kops-linux-amd64
+chmod +x kops-linux-amd64 kubectl
+mv kubectl /usr/local/bin/kubectl
+mv kops-linux-amd64 /usr/local/bin/kops
+
+aws s3api create-bucket --bucket devops8899.k8s.local --region us-east-1
+aws s3api put-bucket-versioning --bucket devops8899.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+export KOPS_STATE_STORE=s3://devops8899.k8s.local
+kops create cluster --name devops8899.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+kops update cluster --name devops8899.k8s.local --yes --admin
+
+ClusterIP: A ClusterIP service provides a stable IP address and DNS name for pods within a cluster. 
+This type of service is only accessible within the cluster and is not exposed externally.
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: phonepay
+spec:
+  containers:
+    - name: cont1
+      image: rahamshaik/phonepaymovies:v1
+      ports:
+      - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  selector:
+    app: phonepay
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+NodePort: A NodePort service provides a way to expose a service on a static port on each node in the cluster. This type of service is accessible both within the cluster and externally, using the node's IP address and the NodePort. (NODEPORT: 30000-32767)
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: phonepay
+spec:
+  containers:
+    - name: cont1
+      image: rahamshaik/phonepaymovies:v1
+      ports:
+      - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: NodePort
+  selector:
+    app: phonepay
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30001
+
+LOAD BALANCER: A LoadBalancer service provides a way to expose a service externally, using a cloud provider's load balancer. This type of service is typically used when an application needs to handle high-traffic loads and requires automatic scaling and load balancing capabilities.
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: phonepay
+spec:
+  containers:
+    - name: cont1
+      image: rahamshaik/phonepaymovies:v1
+      ports:
+      - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: LoadBalancer
+  selector:
+    app: phonepay
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+NAMESPACE: Used to isolate the environments.
+
+dev -- > test -- > prod
+
+default: whenever we create any resources will store on the default namespace.
+kube-node-lease: here node-1 can lease an object from node-2.
+kube-public: object can be accessible publically.
+kube-system: K8s creates some default objects that stores on kube-system.
+
+kubectl get all --namespace default
+kubectl get all --namespace kube-node-lease
+kubectl get all --namespace kube-public
+kubectl get all --namespace kube-system
+
+kubectl create ns dev
+kubectl config set-context --current --namespace=dev
+kubectl config view --minify | grep -i namespace
+
+kubectl run pod1 --image=nginx
+kubectl run pod2 --image=nginx
+kubectl run pod3 --image=nginx
+
+kubectl describe pod pod1| grep -i namespace
+kubectl describe pod pod2| grep -i namespace
+kubectl describe pod pod3| grep -i namespace
+
+kubectl create ns test
+kubectl config set-context --current --namespace=test
+kubectl config view --minify | grep -i namespace
+
+kubectl run pod4 --image=nginx
+kubectl run pod5 --image=nginx
+kubectl run pod6 --image=nginx
+
+kubectl describe pod pod4 | grep -i namespace
+kubectl describe pod pod5 | grep -i namespace
+kubectl describe pod pod6 | grep -i namespace
+
+
+kubectl get po --namespace dev
+kubectl delete pod pod1 --namespace dev
+kubectl get po --namespace dev
+
+kubectl delete ns dev
+kubectl delete ns test
+
+HISTORY:
+
+ 1  vim .bashrc
+    2  source .bashrc
+    3  vim kops.sh
+    4  sh kops.sh
+    5  vim kops.sh
+    6  sh kops.sh
+    7  vim kops.sh
+    8  sh kops.sh
+    9  kops validate cluster --wait 10m
+   10  cat kops.sh
+   11  export KOPS_STATE_STORE=s3://devops8899.k8s.local
+   12  kops validate cluster --wait 10m
+   13  kubectl get no
+   14  vim pod.yml
+   15  kubectl get po
+   16  kubectl get svc
+   17  kubectl create -f pod.yml
+   18  kubectl get po
+   19  kubectl get svc
+   20  kubectl describe pod db
+   21  kubectl get po
+   22  kubectl get po -o wide
+   23  curl https://44.193.17.61:80
+   24  curl https://44.193.17.61:80/
+   25  cat pod.yml
+   26  vim pod.yml
+   27  kubectl create -f pod.yml
+   28  kubectl get po
+   29  kubectl delete pod db
+   30  kubectl create -f pod.yml
+   31  vim pod.yml
+   32  kubectl delete pod db
+   33  kubectl create -f pod.yml
+   34  kubectl get svc
+   35  kubectl delete svc db
+   36  kubectl get svc
+   37  kubectl get svc,po
+   38  kubectl delete pod sb
+   39  kubectl delete pod db
+   40  kubectl get svc,po
+   41  kubectl create -f pod.yml
+   42  kubectl get svc,po
+   43  kubectl get po -o wide
+   44  ll
+   45  kubectl delete -f pod.yml
+   46  kubectl get svc,po
+   47  cat pod.yml
+   48  vi pod.yml
+   49  kubectl create -f pod.yml
+   50  kubectl get svc,po
+   51  kubectl describe svc db
+   52  kubectl delete -f pod.yml
+   53  cat pod.yml
+   54  kubectl get ns
+   55  kubectl get all --namespace default
+   56  kubectl get all --namespace kube-node-lease
+   57  kubectl get all --namespace kube-public
+   58  kubectl get all --namespace kube-system
+   59  kubectl get all --namespace default
+   60  kubectl create ns dev
+   61  kubectl get ns
+   62  kubectl config set-context --current --namespace=raham
+   63  kubectl config view --minify | grep namespace:
+   64  kubectl config view --minify
+   65  kubectl get ns
+   66  kubectl config set-context --current --namespace=dev
+   67  kubectl config view --minify
+   68  kubectl config view --minify | grep -i namespace
+   69  kubectl run pod1 --image=nginx
+   70  kubectl run pod2 --image=nginx
+   71  kubectl run pod3 --image=nginx
+   72  kubectl get po
+   73  kubectl describe pod pod1 | grep -i namespace
+   74  kubectl describe pod pod2 | grep -i namespace
+   75  kubectl describe pod pod3 | grep -i namespace
+   76  kubectl get po
+   77  kubectl create ns test
+   78  kubectl config set-context --current --namespace=test
+   79  kubectl config view --minify | grep -i namespace
+   80  kubectl run pod4 --image=nginx
+   81  kubectl run pod5 --image=nginx
+   82  kubectl run pod6 --image=nginx
+   83  kubectl get po
+   84  kubectl get po --ns dev
+   85  kubectl get po --namespace dev
+   86  kubectl delete pod pod1 --namespace dev
+   87  kubectl get po --namespace dev
+   88  kubectl get ns
+   89  kubectl delete ns dev
+   90  kubectl delete ns test
+   91  kops get cluster
+   92  kops delete cluster --name devops8899.k8s.local --yes --admin
+   93  kops delete cluster --name devops8899.k8s.local --yes
+   94  cat kops.sh
+   95  history
+
+==========================
+
+DAY-05:
+
+PROBES: USED TO CHECK CONTAINER HEALTH.
+
+Readiness Probe: check pod is ready to serve or not.
+Liveness Probe: check the health of a running pod. 
+Startup Probe: check application is available or not before receiving the traffic.
+
+
+READINESS PROBE:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: raham-ready
+spec:
+  containers:
+  - name: cont1
+    image: nginx
+    command:
+      - sleep
+      - "3600"
+    readinessProbe:
+      periodSeconds: 10
+      exec:
+        command:
+        - cat
+        - /root/app.yml
+    resources: {}
+
+kubectl apply -f pod.yml
+kubectl get po
+kubectl exec -it raham-ready -- touch /root/app.yml
+kubectl get po
+
+
+
+LIVENESS PROBE:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: registry.k8s.io/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 10
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+
+periodSeconds: every 10 seconds it will check the health of the container.
+initialDelaySeconds: to start the container
+
+
+STARTUPPROBE: 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: raham-probes
+  labels:
+    role: web
+spec:
+  containers:
+  - name: nginx-probes
+    image: nginx
+    readinessProbe:
+      tcpSocket:
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    livenessProbe:
+      tcpSocket:
+        port: 80
+      initialDelaySeconds: 20
+      periodSeconds: 20
+
+
+ 96  kops
+   97  kubectl
+   98  aws s3 ls
+   99  export KOPS_STATE_STORE=s3://rahamssshaik09.k8s.local
+  100  kops create cluster --name rahams.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+  101  export KOPS_STATE_STORE=s3://devops8899.k8s.local
+  102  kops create cluster --name devops8899.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+  103   kops update cluster --name devops8899.k8s.local --yes --admin
+  104  kops validate cluster --wait 10m
+  105  ll
+  106  rm -rf *
+  107  vim pod.yml
+  108  kubectl apply -f pod.yml
+  109  kubectl get po
+  110  kubectl describe pod raham-ready
+  111  cat pod.yml
+  112  kubectl describe pod raham-ready
+  113  vim pod.yml
+  114  kubectl delete pod raham-ready
+  115  kubectl apply -f pod.yml
+  116  vim pod.yml
+  117  kubectl apply -f pod.yml
+  118  kubectl get po
+  119  kubectl delete pod raham-ready
+  120  kubectl describe pod raham-ready
+  121  kubectl exec -it raham-ready -- touch /root/app.yml
+  122  kubectl get po
+  123  kubectl apply -f pod.yml
+  124  kubectl exec -it raham-ready -- touch /root/app.yml
+  125  kubectl apply -f pod.yml
+  126  kubectl get po
+  127  cat pod.yml
+  128  kubectl delete -f pod.yml
+  129  vim pod.yml
+  130  kubectl apply -f pod.yml
+  131  kubectl get po
+  132  kubectl watch pod liveness-exec
+  133*
+  134  kubectl get po
+  135  cat pod.yml
+  136  kubectl get po
+  137  kubectl describe pod liveness-exec
+  138  cat pod.yml
+  139  kubectl describe pod liveness-exec
+  140  cat pod.yml
+  141  kubectl delete -f pod.yml
+  142  vim pod.yml
+  143  kubectl apply -f pod.yml
+  144  kubectl get po
+  145  kubectl describe pod raham-probes
+  146  kubectl get po
+  147  cat pod.yml
+  148  history
+  
+  
+  ===============================================
+  
+  DAY-06:
+  
+  CONFIGMAPS & SECRETS
+  
+  CONFIGMAPS & SECRETS:
+
+ENV VARS: used to define a vlaue.
+LEVEL:
+CONTAINER LEVEL
+POD LEVEL
+DEPLOYMENT LEVEL
+
+
+METHODS TO DEFINE:
+1. MANIFEST FILE
+2. CONFIGMAPS
+3. SECRETS
+
+CONFIGMAP:
+
+Used to store data in key-value, files or CLI used by pods, container etc---
+data is not encrypted, if we want encrypt we need to use secrets.
+limit is 1 MB, to store more than 1 MB mount the volume seperately.
+
+
+1. key-value:
+
+cat configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: swiggycm
+data:
+  tomcat_url: "https://192.16.100.10:8080"
+  db_url: "https://192.16.100.10:5432"
+
+cat pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: swiggy
+spec:
+  containers:
+    - name: swiggy-cont1
+      image: nginx
+      envFrom:
+        - configMapRef:
+            name: swiggycm
+
+
+2. CLI:
+
+kubectl create deploy swiggydb --image=mariadb
+kubectl get pods
+kubectl create deploy swiggydb --image=mariadb
+kubectl logs swiggydb-5d49dc56-cbbqk
+kubectl set env deploy swiggydb MYSQL_ROOT_PASSWORD=Raham123 
+kubectl get pods
+
+3. FILE
+
+vim varsfile
+MYSQL_ROOT_PASSWORD=Raham123
+MYSQL_USER=admin
+
+kubectl create cm dbvars --from-env-file=varsfile
+kubectl describe cm dbvars
+kubectl get deploy 
+kubectl delete deploy swiggydb
+kubectl create deploy swiggydb --image=mariadb 
+kubectl get pods
+kubectl get cm
+kubectl set env deploy swiggydb --from=configmap/dbvars
+kubectl get pods
+kubectl edit deploy swiggydb
+
+SECRETS:
+
+To store sensitive data in an unencrypted format like passwords, ssh-keys etc ---
+it uses base64 encoded format
+Designed to prevent  exposure or unauthorized access to sensitive information within the cluster.
+Both secrets and Config maps are used outside of deployment
+config maps cannot encode but secrets will encode the data
+password=raham (now we can encode and ecode the value)
+
+
+K8s supports different types of secrets:
+Generic: Generic secrets allow you to store arbitrary key-value pairs.
+TLS: To store TLS certificates for securing communication between services.
+Docker-registry: Docker-registry secrets are used for storing credentials required to authenticate with private Docker registries.
+SSH: To store SSH private keys, used for secure access to external resources.
+
+
+kubectl get secret
+kubectl create secret generic password --from-literal=ROOT_PASSWORD=raham123
+kubectl get secrets
+kubectl get secrets password -o yaml
+echo "cmFoYW0xMjM=" | base64 --decode
+echo "cmFoYW0xMjM=" | base64 -d
+
+
+HISTORY:
+
+ 1  ll
+    2  mkdir raham
+    3  cd raham/
+    4  vim minikube,sh
+    5  vim minikube.sh
+    6  sh minikube.sh
+    7  minikube status
+    8  ls -al
+    9  vim configmap.yml
+   10  vim pod.yml
+   11  cat configmap.yml
+   12  cat pod.yml
+   13  vi configmap.yml
+   14  kubectl create -f configmap.yml
+   15  kubectl get cm
+   16  kubectl describe cm swiggycm
+   17  cat pod.yml
+   18  kubectl apply -f pod.yml
+   19  vim pod.yml
+   20  kubectl apply -f pod.yml
+   21  kubectl get po
+   22  kubectl describe pod swiggy
+   23  kubectl describe cm swiggyc
+   24  cat configmap.yml
+   25  cat pod.yml
+   26  kubectl delete -f pod.yml configmap.yml
+   27  kubectl delete -f pod.yml
+   28  kubectl delete -f configmap.yml
+   29  kubectl create deploy swiggydb --image=mariadb
+   30  kubectl get deploy
+   31  kubectl describe deploy swiggydb
+   32  kubectl get deploy
+   33  kubectl get po
+   34  kubectl get logs swiggydb-7688f4c695-nx86g
+   35  kubectl logs swiggydb-7688f4c695-nx86g
+   36  kubectl set env deploy swiggydb MYSQL_ROOT_PASSWORD=Raham123
+   37  kubectl get po
+   38  vim dbinfo
+   39  ls
+   40  cat dbinfo
+   41  kubectl get cm
+   42  kubectl create cm db --from-env-file=dbinfo
+   43  kubectl get cm
+   44  kubectl describe cm db
+   45  kubectl get deploy
+   46  kubectl delete deploy swiggydb
+   47  kubectl get deploy
+   48  kubectl create deploy swiggydb --image=mariadb
+   49  kubectl get po
+   50  kubectl get cm
+   51  kubectl set env deploy swiggydb --from=configmap/db
+   52  kubectl get cm
+   53  kubectl get po
+   54  kubectl get secrets
+   55  kubectl get ns
+   56  kubectl get po
+   57  kubectl get po -A
+   58  kubectl get ns
+   59  kubectl get secrets
+   60  kubectl get secrets -A
+   61  kubectl create secrets generic -h
+   62  kubectl get po -h
+   63  kubectl get po --help
+   64  kubectl create secrets generic --from-literal=ROOT_PASSWORD=raham123
+   65  kubectl create secret generic --from-literal=ROOT_PASSWORD=raham123
+   66  kubectl create secret generic -h
+   67  kubectl create secret generic --from-literal=key=abcd
+   68  kubectl create secret generic password --from-literal=key=abcd
+   69  kubectl get secret
+   70  kubectl describe secret password
+   71  kubectl get secret -o yaml
+   72  echo "YWJjZA=="
+   73  echo "YWJjZA==" | base64 -d
+   74  kubectl create secret generic url --from-literal=key=0.0.0.0:4321
+   75  kubectl get secret
+   76  kubectl describe secret url
+   77  kubectl describe secret url -o yaml
+   78  kubectl get secret url -o yaml
+   79  echo "MC4wLjAuMDo0MzIx" | base64 -d
+   80  echo "MC4wLjAuMDo0MzIx" | base64 --decode
+
+===================
+
+day-08:\
+
+Authentication: a person who can have access.
+Authorization: a person who can create.
+
+role: is a user/group with some permissions in a namespace.
+cluster role: a user/group with some permissions in the entire cluster.
+
+
+Role Binding: to attach a role to a user/group in a namespace.
+cluster role Binding: to attach a role to a user/group in the entire cluster.
+
+
+Service account: to provide access for resources.
+
+
+
+
+1.1 create Namespace
+kubectl create namespace raham
+kubectl get ns
+
+1.2. Create a Service Account
+Following is the way to create Service Account. I have assigned this Service Account into previously created rahasak namespace.
+vim one.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: raham-serviceaccount
+  namespace: raham
+kubectl apply -f one.yml
+kubectl get serviceaccounts -n raham
+
+
+
+1.3. Create Role 
+vim two.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: raham
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+kubectl apply -f two.yml
+kubectl get roles -n raham
+kubectl describe role pod-reader -n raham
+
+
+1.4. Create RoleBinding: This Role can be assigned to Service Account via RoleBinding. So that Service Account can only list, get, watch pods in the raham namespace.
+
+vim three.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-binding
+  namespace: raham
+roleRef: # points to the Role
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pod-reader # name of Role
+subjects: # points to the ServiceAccount
+- kind: ServiceAccount
+  name: raham-serviceaccount # service account to bind to
+  namespace: raham # ns of service account
+
+
+
+vim four.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: raham-pod
+  namespace: raham
+spec:
+  containers:
+  - image: nginx:latest
+    name: kubectl
+  serviceAccountName: raham-serviceaccount
+
+
+To give access for Deployment also:
+
+vim two.yml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: raham
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "watch", "list"]
+
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+
+history:
+
+  1  mkdir k8s
+    2  cs k8s/
+    3  cd k8s/
+    4  vim minikube.sh
+    5  sh minikube.sh
+    6  kubectl get ns
+    7  kubectl create ns raham
+    8  kubectl get ns
+    9  vim serviceaccount.yml
+   10  kubectl create -f serviceaccount.yml
+   11  kubectl get svc
+   12  kubectl api-resources
+   13  kubectl api-resources | grep -i serviceaccounts
+   14  kubectl get sa
+   15  kubectl api-resources
+   16  vim role.yml
+   17  kubectl apply -f role.yml
+   18  kubectl get roles
+   19  kubectl get roles -n raham
+   20  kubectl get po -n raham
+   21  kubectl describe role pod-reader -n raham
+   22  vim rolebinding.yml
+   23  kubectl apply -f rolebinding.yml
+   24  vim permission.yml
+   25  kubectl apply -f permission.yml
+   26  kubectl get po
+   27  kubectl get po -n raham
+   28  kubectl get rs -n raham
+   29  kubectl exec -it --namespace=raham raham-pod -- /bin/bash
+   30  kubectl get pods -n raham
+   31  kubectl get pods -n svc
+   32  kubectl get pv -n raham
+   33  kubectl get cm -n raham
+   34  kubectl get pods -n raham
+   35  kubectl get pod raham-pod -n raham
+   36  kubectl delete pod raham-pod -n raham
+   37  kubectl get pods -n raham
+   38  ll
+   39  cat role
+   40  cat role.yml
+   41  vim role.yml
+   42  kubectl apply -f role.yml
+   43  kubectl describe role pod-reader -n raham
+   44  kubectl exec -it --namespace=raham raham-pod -- /bin/bash
+   45  kubectl create -f permission.yml
+   46  kubectl exec -it --namespace=raham raham-pod -- /bin/bash
+   47  kubectl get po,svc
+   48  kubectl get po,svc -n raham
+   49  kubectl get svc -n raham
+   50  kubectl delete pod raham-pod
+   51  kubectl delete pod raham-pod -n raham
+   52  kubectl config set-context --current --namepsace=raham
+   53  kubectl config set-context --current --namespace=raham
+   54  kubectl get minify
+   55  kubectl config minify
+   56  kubectl config --minify
+   57  kubectl config view --minify
+   58  kubectl create deploy abc --image=nginx
+   59  kubectl get deploy
+   60  kubectl get clusterrolebinding
+   61  kubectl delete ns raham
+   62  kubectl get ns
+   63  kubectl create namespace raham
+   64  kubectl get ns
+   65  vim one.yml
+   66  kubectl apply -f one.yml
+   67  vim two.yml
+   68  kubectl apply -f two.yml
+   69  kubectl describe role pod-reader -n raham
+   70  vim three.yml
+   71  kubectl apply -f three.yml
+   72  vim four.yml
+   73  kubectl apply -f four.yml
+   74  kubectl get pods -n raham
+   75  kubectl exec -it --namespace=raham raham-pod -- /bin/bash
+   76  kubectl auth can-i list pods --namespace raham
+   77  kubectl auth can-i get pods --namespace raham
+   78  kubectl auth can-i watch pods --namespace raham
+   79  kubectl auth can-i delete pods --namespace raham
+   80  kubectl auth can-i delete rs --namespace raham
+   81  kubectl auth can-i delete rs --namespace raham --as pod-reader
+   82  kubectl auth can-i watch pods --namespace raham --as pod-reader
+   83  kubectl auth can-i list pods --namespace raham --as pod-reader
+   84  kubectl get pv -n raham
+   85  kubectl get rs -n raham
+   86  vim two.yml
+   87  kubectl apply -f two.yml
+   88  kubectl describe role pod-reader -n raham
+   89  kubectl get po,svc
+   90  vim two.yml
+   91  kubectl apply -f two.yml
+   92  vim two.yml
+   93  kubectl apply -f two.yml
+   94  kubectl describe role pod-reader -n raham
+   95  cat two.yml
+   96  history
