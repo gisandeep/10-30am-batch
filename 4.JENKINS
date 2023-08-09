@@ -1,0 +1,585 @@
+JENKINS SETUP:
+
+STEP-1: GETTING REPO AND KEY FROM JENKINS.IO
+
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+SETP-2: INSTALLING JAVA-11 (SUPPORTS 11 OR 17)
+amazon-linux-extras install java-openjdk11 -y
+java -version
+
+STEP-3: INSTALLING GIT, MAVEN & JENKINS
+yum install git maven jenkins -y
+
+STEP-4: RESTARTING JENKINS
+
+When we download a service in Linux it will be on stropped state
+
+systemctl start jenkins.service
+systemctl status jenkins.service
+
+STEP-5: CONNECTING TO JENKINS DASHBOARD
+
+public-ip:8080
+
+------------------------------------------------------------------
+CUSTOM WORKSPACE:
+mdkir -p tcs/jenkinsbuilds
+cd /
+chown jenkins:jenkins /root/ -R
+
+
+TO EXECUTE LINUX COMMANDS:
+Build Steps  -- > execute shell
+
+touch file1
+touch java
+lscpu > one.txt
+cat /etc/passwd > two.txt
+
+VARIABLES :
+1. USER DEFINED VARIABLES
+2. JENKINS ENV VARIABLES
+
+USER DEFINED VARIABLES: (these are case sensitive)
+A. LOCAL VARS: works inside the job only
+
+B. GLOBAL VARS: Works anywhere
+Dashboard  -- > Manage Jenkins -- > Configure System -- > Global properties 
+Environment variables -- > add
+
+
+-------------------------------------------------------------------------------------------------------
+DAY-01 : HISTORY
+
+ 1  sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    2  sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    3  amazon-linux-extras install java-openjdk11 -y
+    4  java -version
+    5  yum install git maven jenkins -y
+    6  systemctl start jenkins.service
+    7  systemctl status jenkins.service
+    8  cat /var/lib/jenkins/secrets/initialAdminPassword
+    9  cd /var/lib/jenkins/workspace/job1
+   10  ls
+   11  cd
+   12  mkdir tcs/jenkinsbuilds
+   13  mkdir -p tcs/jenkinsbuilds
+   14  ll
+   15  ls tcs/
+   16  cd /
+   17  ll
+   18  ls root/
+   19  ls root/tcs/
+   20  ls root/tcs/jenkinsbuilds/
+   21  cat /etc/passwd | grep -i jenkins
+   22  chown jenkins:jenkins /root/* -R
+   23  ll
+   24  chown jenkins:jenkins /root/ -R
+   25  ll
+   26  cd /root/
+   27  ll
+   28  cd tcs/
+   29  ll
+   30  cd jenkinsbuilds/
+   31  ll
+   32  cd /var/lib/jenkins/workspace/job2
+   33  ll
+   34  cat one.txt
+   35  cat two.txt
+   36  history
+-===============================================================================================
+
+DAY-02: 
+
+vim jenkins.sh
+
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+amazon-linux-extras install java-openjdk11 -y
+yum install git maven jenkins -y
+systemctl start jenkins.service
+systemctl status jenkins.service
+
+sh jenkins.sh
+
+JENKINS ENV VARIABLES: These vars are defined by jenkins by default
+some JENKINS ENV VARIABLES are going to change for everybuild
+clikc on  list of available environment variables
+
+echo "hai all and the build number is: $BUILD_NUMBER, the job name is: $JOB_NAME"
+echo "the branch name is: $GIT_BRANCH, the commit is: $GIT_COMMIT"
+
+
+PARAMETERS:
+
+1. CHOICE: 
+Configure -- > Tis project is parameterized -- > Add parameter -- > choice
+
+2. STRING 
+Configure -- > Tis project is parameterized -- > Add parameter -- > string
+
+3. MULTI STRING:
+Configure -- > Tis project is parameterized -- > Add parameter -- > multi string
+
+4. FILE:
+Configure -- > Tis project is parameterized -- > Add parameter -- > File
+
+5. BOOL:
+Configure -- > Tis project is parameterized -- > Add parameter -- > Bool
+
+
+
+
+THROTTLE BUILD: To restrict the number of builds in a job
+
+Build Triggers:
+tigger builds remotely (e.g., from scripts)
+
+http://54.226.204.86:8080/job/raham/build?token=abcd
+
+LINKED JOBS: jobs are linked with other jobs
+1. UPSTREAM
+2. DOWN STREAM
+
+
+PASSWORD LESS LOGIN:
+cd /var/lib/jenkins
+vim config.xml
+
+  <useSecurity>true</useSecurity>
+  <useSecurity>false<security>
+
+systemctl restart jenkins.service
+
+
+------------------------------------------------------------------------
+
+DAY-03:
+
+PIPELINE:
+
+SINGLE STAGE PIPLEINE:
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('stage-1') {
+            steps {
+                sh 'touch file1'
+            }
+        }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------
+MULTI STAGE PIPELINE:
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('stage-1') {
+            steps {
+                sh 'touch file1'
+            }
+        }
+        stage('stage-2') {
+            steps {
+                echo '"hai all" > file1'
+            }
+        }
+        stage('stage-3') {
+            steps {
+                sh 'mv file1 raham'
+            }
+        }
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------
+PIPELIEN AS A CODE:
+
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('stage-1') {
+            steps {
+                sh 'touch file2'
+                echo '"hai all this is my file2" > file2'
+                sh 'mv file2 file3'
+            }
+        }
+    }
+}
+
+
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('stage-1') {
+            steps {
+                sh 'lscpu'
+                sh 'lsmem'
+                sh 'cat /etc/passwd'            }
+        }
+    }
+}
+
+PIPELIEN AS A CODE AS A SINGLE LINE:
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('stage-1') {
+            steps {
+                sh '''
+                lscpu
+                lsmem
+                cat /etc/passwd
+                '''
+                
+            }
+        }
+    }
+}
+
+-----------------------------------------------------------------------------------------------
+
+ENV VARS:
+
+pipeline {
+   agent any
+
+   stages {
+       stage('ENV') {
+           steps {
+               sh 'echo "${BUILD_NUMBER}"'
+               sh 'echo ${JOB_NAME}'
+           }
+       }
+   }
+}
+
+USER DEFINED VARS:
+
+pipeline {
+   agent any
+   environment {
+       name = 'raham'
+       loc = 'hyd'
+   }
+
+   stages {
+       stage('ENV') {
+           steps {
+               sh 'echo "${BUILD_NUMBER}"'
+               sh 'echo ${JOB_NAME}'
+               sh 'echo my name is: $name and im from: $loc'
+           }
+       }
+   }
+}
+
+
+pipeline {
+   agent any
+   environment {
+       name = 'raham'
+       loc = 'hyd'
+   }
+
+   stages {
+       stage('jen-env-vars') {
+           steps {
+               sh '''
+               echo $BUILD_NUMBER
+               echo The job name is: $JOB_NAME
+               '''
+           }
+       }
+       stage('user-defined-vars') {
+           steps {
+               sh '''
+               echo my name is: $name
+               echo im from: $loc
+               '''
+           }
+       }
+   }
+}
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+PASSING PARAMETERS:
+
+pipeline {
+   agent any
+   environment {
+       name = 'raham'
+       loc = 'hyd'
+   }
+    parameters {
+           string(name: 'person', defaultValue: 'raham shaik', description: "how are you")
+           choice(name: 'server', choices: ['a','b','c'], description: "")
+       }
+
+   stages {
+       stage('jen-env-vars') {
+           steps {
+               sh '''
+               echo $BUILD_NUMBER
+               echo The job name is: $JOB_NAME
+               '''
+           }
+       }
+       stage('user-defined-vars') {
+           steps {
+               sh '''
+               echo my name is: $name
+               echo im from: $loc
+               '''
+           }
+       }
+   }
+}
+
+-----------------------------------------------------------------
+
+INTEGRATION OF GIT WITH JENKINS
+
+pipeline {
+    agent any 
+    
+    stages{
+        stage('checkout') {
+            steps {
+              git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+}
+
+INPUT PARAMETER:
+
+pipeline {
+    agent any 
+    
+    stages{
+        stage('checkout') {
+            steps {
+              git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('test') {
+            steps {
+                echo "my code is tested"
+            }
+        }
+        stage('deploy') {
+            input {
+               message "Can We Continue ?"
+               ok "Yes We Can Continue"
+        }
+            steps {
+                echo "my code is deployed"
+            }
+        }
+    }
+}
+
+=======================================================================================================================
+
+DAY-04:
+
+MASTER & SLAVE: To distribute the workload
+LBALES: to assign the work for particular slave
+
+SETUP A SLAVE:
+1. Create a server and install agent (JAVA-11)
+2. configure agent 
+
+    Dashboard
+    Manage Jenkins
+    Nodes
+    New node
+
+ Number of executors : 3
+ Remote root directory: /tmp
+ Labels: prod
+ hostname: private-ip-slave
+ creds: ssh username with private key
+ user: ec2-user
+ private key: pem file
+ Host Key Verification Strategy: non verifying
+
+
+Restrict where this project can be run : Label Expression : Prod
+
+-------------------------------------------------------
+
+PIPELINE:
+
+pipeline {
+  agent {
+    node {
+      label 'prod'
+    }
+  }
+  
+  stages {
+    stage ("one") {
+      steps {
+        echo "hai"
+      }
+    }
+  }
+}
+
+---------------------------------------------------------------------------
+
+POST BUILD ACTIONS: Actions that are going to happenn after the build
+
+ALWAYS : build is success or failure output will come
+SUCCESS : only output will come if build is success
+FAILURE : only output will come if build is failure
+
+pipeline {
+  agent {
+    node {
+      label 'prod'
+    }
+  }
+  
+  stages {
+    stage ("one") {
+      steps {
+        echo1 "hai"
+      }
+    }
+  }
+  post {
+      failure {
+          echo 'my build is done'
+      }
+  }
+}
+
+-------------------------------------------------------------
+
+DAY-05:
+
+RBAC: ROLE BASED ACCESS CONTROL
+
+
+EXP : ANY THING
+FRE : FEW OPTIONS (BUILD)
+
+1. USER-- > 2 USER
+2. Dashboard -- > Manage Jenkins -- > Plugin Manager -- > AVAILABLE -- > Role-based Authorization Strategy
+3. Dashboard -- > Manage Jenkins -- > Configure Global Security -- > Authorization -- > Role-based Authorization 
+4. ROLES -- > 2 ROLES 
+
+
+-----------------------------------------------------------------------------------
+
+JOB VIEWS:
+
+------------------------------------------------------------------------------------
+
+CRON JOB: TO SCHEDULE THE WORK.
+CRON  SYNTAX: * * * * *
+
+*	: MINUTES
+*   : HOURS
+*	: DATE
+*	: MONTH
+*   : DAY OF WEEK (SUN=0, MON=1, T=2 ---- S=6)
+
+
+POLL SCM: It will trigger the build if source code is changed.
+
+WEBHOOK: When dev chnages the code job will trigger immedieately.
+
+
+PROJECT:
+
+
+
+TICKET: Assign the work
+DEV/TEST 
+TOOLS : SharePoint, JIRA, TRELLO, WORKDAY, SERVICENOW
+
+ORG NAME: TCS
+CLIENT: SWIGGY
+TASK: DEPLOY/RESTART/BACKUPS
+ENV: DEV/TEST/PROD/UAT
+
+BRANCH: MASTER
+GITHUB-REPO: 
+PRIORITY: HIGH/LOW/MEDIUM
+ASSIGNED-TO: RAHAM
+COMMENTS: TAKE BACKUP
+--------------------------------------------------------
+
+TAKEN-BY: RAHAM
+STATED TIME: 11:30
+PROGRESS: ON-GOING/YET TO START/COMPLETED
+STATUS: SUCCESS OR FAILED
+TIME TAKEN: 2 HRS
+COMMENTS:
+
+
+history: master
+
+ 1  amazon-linux-extras install epel -y
+    2  amazon-linux-extras install java-openjdk11 -y
+    3  yum install jenkins -y
+    4    sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    5    sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    6  yum install jenkins -y
+    7  systemctl start jenkins.service
+    8  systemctl status jenkins.service
+    9  yum install git java-1.8.0-openjdk maven -y
+   10  java -version
+   11  update-alternatives --config java
+   12  java -version
+   13  update-alternatives --config java
+   14  java -version
+   15  update-alternatives --config java
+   16  java -version
+   17  update-alternatives --config java
+   18  histroy
+   19  history
+
+slave: 
+
+ 1  amazon-linux-extras install java-openjdk11 -y
+    2  hostname -i
+    3  yum install git java-1.8.0-openjdk maven -y
+    4  java -version
+    5  wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.tar.gz
+    6  ll
+    7  tar -zxvf apache-tomcat-9.0.74.tar.gz
+    8  cd apache-tomcat-9.0.74/
+    9  ll
+   10  vim webapps/manager/META-INF/context.xml
+   11  vim conf/tomcat-users.xml
+   12  cd bin/
+   13  ll
+   14  ./startup.sh
+   15  ./shutdown.sh
+   16  ./startup.sh
+   17  update-alternatives --config java
+   18  java -version
+   19  history
